@@ -1,0 +1,19 @@
+meta {
+  name: 게시물 등록
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{URL}}/posts
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "type": "{{name}}",
+    "title": "와따 졸린거",
+    "content": "그냥 그렇게 아셔요"
+  }
+}

@@ -1,0 +1,25 @@
+meta {
+  name: 회원 가입
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{URL}}/users
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "dkssyd@gs.com",
+    "password": "11111111",
+    "name": "아무개",
+    "type": "user",
+    "profileImage": {
+        "originalname": "9791197600630.jpg",
+        "name": "Gl6aszsu3.jpg",
+        "path": "/files/00-sample/Gl6aszsu3.jpg"
+      }
+  }
+}
