@@ -3,16 +3,23 @@ import useFetch from "@hooks/useFetch";
 import { useNavigate } from "react-router-dom";
 import ListItem from "./ListItem";
 import Search from "@components/Search";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function List() {
   const navigate = useNavigate();
-  const { data, loading, error } = useFetch("/posts");
-  const [key, setKey] = useState();
+  const [keyword, setKeyword] = useState("");
+  const { data, loading, error, refetch } = useFetch(
+    `/posts?type=post&keyword=${keyword}`
+  );
 
+  console.log(keyword);
   const ListItems = data?.item.map((item, index) => (
     <ListItem key={item._id} item={item} index={index} />
   ));
+
+  useEffect(() => {
+    refetch();
+  }, [keyword]);
 
   return (
     <main className="min-w-80 p-10">
@@ -23,7 +30,7 @@ function List() {
       </div>
       <div className="flex justify-end mr-4">
         {/* 검색 */}
-        <Search key={key} setKey={setKey} />
+        <Search key={keyword} setKeyword={setKeyword} />
 
         <Button onClick={() => navigate(`/info/new`)}>글작성</Button>
       </div>
