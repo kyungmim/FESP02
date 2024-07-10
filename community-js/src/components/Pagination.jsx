@@ -1,16 +1,19 @@
 import { Link } from "react-router-dom";
 
-function Pagination() {
+function Pagination({ totalPages }) {
+  const pages = [];
+
+  for (let i = 1; i <= totalPages; i++) {
+    pages.push(
+      <li className="text-bold text-blue-700" key={i}>
+        <Link to={`/post?page=${i}`}>{i}</Link>
+      </li>
+    );
+  }
+
   return (
     <div>
-      <ul className="flex justify-center gap-3 m-4">
-        <li className="text-bold text-blue-700">
-          <Link to="/info?page=1">1</Link>
-        </li>
-        <li>
-          <Link to="/info?page=2">2</Link>
-        </li>
-      </ul>
+      <ul className="flex justify-center gap-3 m-4">{pages}</ul>
     </div>
   );
 }

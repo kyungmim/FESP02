@@ -1,25 +1,37 @@
 import Button from "@components/Button";
 import useFetch from "@hooks/useFetch";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ListItem from "./ListItem";
 import Search from "@components/Search";
 import { useEffect, useState } from "react";
+import Pagination from "@components/Pagination";
 
 function List() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.get("page") || 1;
   const { data, loading, error, refetch } = useFetch(
-    `/posts?type=post&keyword=${keyword}`
+    `/posts?type=post&limit=10&keyword=${keyword}&page=${page}`
   );
 
-  console.log(keyword);
   const ListItems = data?.item.map((item, index) => (
     <ListItem key={item._id} item={item} index={index} />
   ));
 
   useEffect(() => {
     refetch();
+    searchParams.set("page", 1);
+    setSearchParams(searchParams);
+    // 키워드로 인해 링크가 바뀌면 데이터값이
+    // limit값 + 현재페이지 넘버 값보다 많으면 뜨지만 만약 1개인경우 값이 1개이기 떄문에
+    // 1페이지에 검색된거지만 현재페이지는 1페이지 이상에 있으면 값이 나오기 않기 때문에
+    // 검색시 1로 초기화 시켜줘야함
   }, [keyword]);
+
+  useEffect(() => {
+    refetch();
+  }, [page]);
 
   return (
     <main className="min-w-80 p-10">
@@ -30,7 +42,7 @@ function List() {
       </div>
       <div className="flex justify-end mr-4">
         {/* 검색 */}
-        <Search key={keyword} setKeyword={setKeyword} />
+        <Search keyword={keyword} setKeyword={setKeyword} />
 
         <Button onClick={() => navigate(`/info/new`)}>글작성</Button>
       </div>
@@ -88,16 +100,7 @@ function List() {
         <hr />
 
         {/* 페이지네이션 */}
-        <div>
-          <ul className="flex justify-center gap-3 m-4">
-            <li className="text-bold text-blue-700">
-              <a href="/info?page=1">1</a>
-            </li>
-            <li>
-              <a href="/info?page=2">2</a>
-            </li>
-          </ul>
-        </div>
+        <Pagination totalPages={data?.pagination.totalPages} />
       </section>
     </main>
   );
