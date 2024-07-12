@@ -13,6 +13,15 @@ function Header() {
     navigate(`/`);
   };
 
+  const handleMenu = (url) => {
+    if (user) {
+      navigate(url);
+    } else {
+      alert("로그인후 이용가능합니다 :)");
+      navigate("/user/login");
+    }
+  };
+
   return (
     <header className="px-8 min-w-80 bg-slate-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 transition-color duration-500 ease-in-out">
       <nav className="flex flex-wrap justify-center items-center p-4 md:flex-nowrap md:justify-between">
@@ -25,13 +34,13 @@ function Header() {
         <div className="w-auto order-2 text-base mt-4 md:mt-0">
           <ul className="flex items-center gap-6 uppercase">
             <li className="hover:text-amber-500 hover:font-semibold">
-              <Link to="/info">정보공유</Link>
+              <button onClick={() => handleMenu("/info")}>정보공유</button>
             </li>
             <li className="hover:text-amber-500 hover:font-semibold">
-              <Link to="/free">자유게시판</Link>
+              <button onClick={() => handleMenu("/post")}>자유게시판</button>
             </li>
             <li className="hover:text-amber-500 a:font-semibold">
-              <Link to="/qna">질문게시판</Link>
+              <button onClick={() => handleMenu("/qna")}>질문게시판</button>
             </li>
           </ul>
         </div>

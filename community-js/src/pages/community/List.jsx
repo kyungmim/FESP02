@@ -1,6 +1,11 @@
 import Button from "@components/Button";
 import useFetch from "@hooks/useFetch";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import ListItem from "./ListItem";
 import Search from "@components/Search";
 import { useEffect, useState } from "react";
@@ -10,13 +15,14 @@ function List() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
+  const { type } = useParams();
   const page = searchParams.get("page") || 1;
   const { data, loading, error, refetch } = useFetch(
-    `/posts?type=post&limit=10&keyword=${keyword}&page=${page}`
+    `/posts?type=${type}&limit=10&keyword=${keyword}&page=${page}`
   );
 
   const ListItems = data?.item.map((item, index) => (
-    <ListItem key={item._id} item={item} index={index} />
+    <ListItem key={item._id} item={item} index={index} type={type} />
   ));
 
   useEffect(() => {
@@ -31,13 +37,30 @@ function List() {
 
   useEffect(() => {
     refetch();
-  }, [page]);
+  }, [page, type]);
+
+  let url = useLocation().pathname;
+
+  let title = "";
+  switch (url) {
+    case "/info":
+      title = "정보공유";
+      break;
+    case "/post":
+      title = "자유게시판";
+      break;
+    case "/qna":
+      title = "질문게시판";
+      break;
+    default:
+      title = "정보공유";
+  }
 
   return (
     <main className="min-w-80 p-10">
       <div className="text-center py-4">
         <h2 className="pb-4 text-2xl font-bold text-gray-700 dark:text-gray-200">
-          정보 공유
+          {title}
         </h2>
       </div>
       <div className="flex justify-end mr-4">
