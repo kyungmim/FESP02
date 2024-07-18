@@ -1,6 +1,7 @@
 import InputError from "@/components/InputError";
 import Submit from "@/components/Submit";
 import { userState } from "@/recoil/user/atoms";
+import { ApiRes, PostComment, SingleItem } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -8,7 +9,15 @@ import { useRecoilValue } from "recoil";
 
 const SERVER = import.meta.env.VITE_API_SERVER;
 
-async function addComment(postId, formData, accessToken) {
+type CommentItem = {
+  content: string;
+};
+
+async function addComment(
+  postId: string | undefined,
+  formData: CommentItem,
+  accessToken: string
+): Promise<ApiRes<SingleItem<PostComment>>> {
   const res = await fetch(`${SERVER}/posts/${postId}/replies`, {
     method: "POST",
     headers: {
@@ -30,9 +39,13 @@ export default function CommentNew() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<CommentItem>();
 
-  const { mutate } = useMutation({
+  const { mutate } = useMutation<
+    ApiResWithValidation<SingleItem<Post>, LoginForm>,
+    Error,
+    LoginForm
+  >({
     mutationFn(formData) {
       return addComment(_id, formData, user?.accessToken);
     },
